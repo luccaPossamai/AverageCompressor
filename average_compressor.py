@@ -44,7 +44,7 @@ def create_average_file(path, dirname_general):
                     initial_data_line = get_first_valid_line_index(lines)
                     if headerText == None:
                         headerText = lines[initial_data_line - 1]
-                    data_matrix = np.array([line.split() for line in lines[initial_data_line:]]).T.astype(float)
+                    data_matrix = np.array([line.split() for line in lines[initial_data_line:]], dtype=object).T.astype(float)
                     data = [arr for arr in data_matrix]
                     if key not in dic:
                         dic[key] = (data, 1)
