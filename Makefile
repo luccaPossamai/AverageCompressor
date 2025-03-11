@@ -1,2 +1,2 @@
 avg:
-	python3 average_compresser.py
+	python3 average_compressor.py
