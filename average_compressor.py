@@ -44,14 +44,14 @@ def create_average_file(path, dirname_general):
                     initial_data_line = get_first_valid_line_index(lines)
                     if headerText == None:
                         headerText = lines[initial_data_line - 1]
-                    data_matrix = np.array([line.split() for line in lines[initial_data_line:]], dtype=object).astype(float)
-                    data_list = [float(line.split()) for line in lines[initial_data_line:]]
-                    #data = [arr for arr in data_matrix]
-                    data = data_list
+                    
+                    data_list = [line.split() for line in lines[initial_data_line:]]
+                    data_float = [[float(a) for a in data_line] for data_line in data_list]
                     if key not in dic:
-                        dic[key] = (data, 1)
+                        dic[key] = (data_float, 1)
                     else:
-                        dic[key] = ([a + b for a, b in zip(data, dic[key][0])], dic[key][1] + 1)
+                        data_sum = [[float(a) + float(b) for a, b in zip(d1, d2)] for d1, d2 in zip(data_float, dic[key][0])]
+                        dic[key] = (data_sum, dic[key][1] + 1)
             except Exception as e:
                 print("     The following error occurred during the compression of the file: " + path_n)
                 print("      " + str(e))
@@ -59,7 +59,7 @@ def create_average_file(path, dirname_general):
     for key in dic.keys():
         data = dic[key][0]
         n = dic[key][1]
-        dic[key] = ([a / n for a in data], n)
+        dic[key] = ([[a / n for a in data_f] for data_f in data], n)
     dirname_general = dirname_general.split("/")[-1]
     path_n = outputs_path() + "/" + dirname_general + "/" + dir_name + "_avg.dat"
     
@@ -67,7 +67,11 @@ def create_average_file(path, dirname_general):
     with open(path_n, 'w') as file:
         file.write("# N: " + str(N) + "\n")
         file.write(headerText)
-        np.savetxt(file, np.column_stack(dic[key][0]))
+        for line in dic[key][0]:
+            s = ""
+            for num in line:
+                s = s + "{:.5g} ".format(num)            
+            file.write(s + "\n")
         file.close()
         
         
